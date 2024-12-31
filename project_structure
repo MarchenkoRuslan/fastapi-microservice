@@ -1,0 +1,33 @@
+app/
+├── alembic/                    # Миграции базы данных
+├── api/                        # API endpoints
+│   ├── v1/                    # Версионирование API
+│   │   ├── endpoints/         
+│   │   │   ├── public.py      # Публичные эндпоинты
+│   │   │   └── private.py     # Приватные эндпоинты
+│   │   └── router.py          
+├── core/                      # Ядро приложения
+│   ├── config.py              # Конфигурация
+│   ├── security.py            # JWT и безопасность
+│   └── exceptions.py          # Кастомные исключения
+├── db/                        # Работа с базой данных
+│   ├── session.py
+│   └── base.py
+├── models/                    # SQLAlchemy модели
+│   ├── client.py
+│   ├── profile.py
+│   ├── verification.py
+│   ├── order.py
+│   └── survey.py
+├── schemas/                   # Pydantic схемы
+│   ├── client.py
+│   ├── profile.py
+│   └── response.py
+├── services/                  # Бизнес-логика
+│   ├── binance.py            # Интеграция с Binance
+│   ├── kyc_provider.py       # Интеграция с KYC провайдером
+│   └── survey.py             # Логика опросников
+├── tests/                    # Тесты
+├── utils/                    # Вспомогательные функции
+├── main.py                   # Точка входа
+└── docker-compose.yml        # Docker конфигурация 
