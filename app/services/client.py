@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.client import Client
-from models.profile import Profile
+from app.models.client import Client
+from app.models.profile import Profile
 from typing import Optional, Dict, Any
 from uuid import UUID
 

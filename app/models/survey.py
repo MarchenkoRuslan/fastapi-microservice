@@ -1,7 +1,8 @@
+from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
-from db.base import Base
+from app.db.base_class import Base
 import uuid
 
 class Survey(Base):

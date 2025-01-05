@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
-from db.session import get_db
-from schemas.response import OrderCheckResponse, VerificationResponse
-from services.binance import BinanceService
-from services.client import ClientService
-from schemas.survey import SurveySubmission, SurveyResult, SurveyData
-from services.survey import SurveyService
-from services.kyc_provider import KYCProviderService
+from app.db.session import get_db
+from app.schemas.response import OrderCheckResponse, VerificationResponse
+from app.services.binance import BinanceService
+from app.services.client import ClientService
+from app.schemas.survey import SurveySubmission, SurveyResult, SurveyData
+from app.services.survey import SurveyService
+from app.services.kyc_provider import KYCProviderService
 
 router = APIRouter()
 

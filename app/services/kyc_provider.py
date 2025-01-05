@@ -1,11 +1,12 @@
-from typing import Optional, Dict, Any
 import httpx
-from core.config import settings
+from typing import Optional, Dict, Any
+from uuid import UUID
+from app.core.config import settings
 
 class KYCProviderService:
     def __init__(self):
-        self.base_url = settings.KYC_PROVIDER_API_URL
         self.api_key = settings.KYC_PROVIDER_API_KEY
+        self.api_url = settings.KYC_PROVIDER_API_URL
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
@@ -18,7 +19,7 @@ class KYCProviderService:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.base_url}/verification/session",
+                    f"{self.api_url}/verification/session",
                     json=client_data,
                     headers=self.headers
                 )
@@ -35,7 +36,7 @@ class KYCProviderService:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"{self.base_url}/verification/status/{session_id}",
+                    f"{self.api_url}/verification/status/{session_id}",
                     headers=self.headers
                 )
                 response.raise_for_status()

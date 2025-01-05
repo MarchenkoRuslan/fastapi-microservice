@@ -2,23 +2,22 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "KYC Service"
-    VERSION: str = "1.0.0"
-    API_V1_STR: str = "/api/v1"
-    
-    POSTGRES_SERVER: str
-    POSTGRES_USER: str
+    # PostgreSQL
+    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_DB: str = "kyc_service"
     
+    # Binance
     BINANCE_API_KEY: str
     BINANCE_API_SECRET: str
     
-    KYC_PROVIDER_API_KEY: str
-    KYC_PROVIDER_API_URL: str
+    # KYC Provider
+    KYC_PROVIDER_API_KEY: Optional[str] = None
+    KYC_PROVIDER_API_URL: Optional[str] = None
     
+    # Security
     JWT_SECRET_KEY: str
-    JWT_ALGORITHM: str = "HS256"
     
     class Config:
         env_file = ".env"

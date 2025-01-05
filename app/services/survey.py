@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.survey import Survey, SurveyResponse
+from app.models.survey import Survey, SurveyResponse
 from typing import Dict, Any, Optional, List
 from uuid import UUID
 
