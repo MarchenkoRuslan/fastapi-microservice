@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional, Any, Dict
 from uuid import UUID
+from app.db.session import get_db
+from app.db.base import Base
 
 class OrderCheckResponse(BaseModel):
     order_exists: bool

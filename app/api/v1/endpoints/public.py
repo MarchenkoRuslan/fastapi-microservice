@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from db.session import get_db
-from schemas.response import OrderCheckResponse
+from schemas.response import OrderCheckResponse, VerificationResponse
 from services.binance import BinanceService
 from services.client import ClientService
 from schemas.survey import SurveySubmission, SurveyResult, SurveyData
