@@ -1,8 +1,9 @@
 import pytest
 from datetime import date
-from models.client import Client
-from models.profile import Profile
-from models.verification import Verification, VerificationStatus
+from uuid import UUID
+from app.models.client import Client
+from app.models.profile import Profile
+from app.models.verification import Verification, VerificationStatus
 from uuid import uuid4
 
 def test_client_creation(db):

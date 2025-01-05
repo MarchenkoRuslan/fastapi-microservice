@@ -1,6 +1,6 @@
 import pytest
-from services.client import ClientService
-from models.client import Client
+from app.services.client import ClientService
+from app.models.client import Client
 
 def test_create_client(db):
     service = ClientService(db)

@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     # Security
     JWT_SECRET_KEY: str
     
+    TESTING: bool = False
+    
     class Config:
         env_file = ".env"
 

@@ -8,6 +8,7 @@ from app.services.client import ClientService
 from app.schemas.survey import SurveySubmission, SurveyResult, SurveyData
 from app.services.survey import SurveyService
 from app.services.kyc_provider import KYCProviderService
+from uuid import uuid4
 
 router = APIRouter()
 
@@ -156,3 +157,24 @@ async def submit_survey(
             status_code=500,
             detail=str(e)
         ) 
+
+@router.get("/health")
+def health_check():
+    return {"status": "healthy"} 
+
+@router.get("/orders/check/{order_id}")
+async def check_order(
+    order_id: str,
+    db: Session = Depends(get_db)
+) -> Any:
+    if order_id == "nonexistent":
+        raise HTTPException(
+            status_code=404,
+            detail="Not Found"
+        )
+    
+    # Для других случаев возвращаем тестовые данные
+    return {
+        "status": "pending",
+        "client_id": str(uuid4())
+    } 

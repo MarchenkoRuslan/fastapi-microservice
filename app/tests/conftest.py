@@ -1,53 +1,44 @@
 import pytest
-from typing import Generator, Dict
+from typing import AsyncGenerator, Generator
+from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.exc import OperationalError
 
-from db.base import Base
-from db.session import get_db
-from main import app
-from core.config import settings
+from app.db.base import Base
+from app.main import app
 
-# Создаем тестовую БД в памяти
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:9379992@localhost/kyc_service_test"
+
+def create_test_database():
+    temp_engine = create_engine("postgresql://postgres:9379992@localhost/postgres")
+    with temp_engine.connect() as conn:
+        conn.execute(text("COMMIT"))  # Закрыть текущую транзакцию
+        conn.execute(text("DROP DATABASE IF EXISTS kyc_service_test"))
+        conn.execute(text("CREATE DATABASE kyc_service_test"))
+
+try:
+    create_test_database()
+except OperationalError:
+    print("Warning: Could not create test database. It might already exist.")
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 @pytest.fixture(scope="function")
-def db() -> Generator:
+async def db() -> AsyncGenerator[Session, None]:
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    
+    session = TestingSessionLocal()
     try:
-        db = TestingSessionLocal()
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()
         Base.metadata.drop_all(bind=engine)
 
-@pytest.fixture(scope="function")
-def client(db) -> Generator:
-    def override_get_db():
-        try:
-            yield db
-        finally:
-            db.close()
-            
-    app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
-
-@pytest.fixture
-def test_order() -> Dict:
-    return {
-        "orderId": "12345",
-        "userId": "user123",
-        "amount": "1000",
-        "currency": "USDT",
-        "status": "NEW"
-    } 
+@pytest.fixture(scope="module")
+def client() -> Generator[TestClient, None, None]:
+    with TestClient(app) as c:
+        yield c 

@@ -1,6 +1,6 @@
 import pytest
-from services.survey import SurveyService
-from models.survey import Survey
+from app.services.survey import SurveyService
+from app.models.survey import Survey
 from uuid import uuid4
 
 def test_get_active_survey(db):
