@@ -29,12 +29,16 @@ test:
   services:
     - postgres:13
   variables:
-    POSTGRES_DB: test_db
-    POSTGRES_USER: test_user
-    POSTGRES_PASSWORD: test_password
-    POSTGRES_HOST: postgres
+    POSTGRES_DB: "test_db"
+    POSTGRES_USER: "test_user"
+    POSTGRES_PASSWORD: "test_password"
+    POSTGRES_HOST: "postgres"
+    DATABASE_URL: "postgresql://test_user:test_password@postgres:5432/test_db"
+    PYTHONPATH: $CI_PROJECT_DIR
   script:
-    - pytest app/tests -v --cov=app
+    - pip install -e .
+    - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
+    - pytest -v --cov=app
 
 build:
   stage: build
