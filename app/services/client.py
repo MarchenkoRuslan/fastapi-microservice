@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from typing import Any, Dict, Optional
+
 from app.models.client import Client
-from typing import Optional, Dict, Any
+from sqlalchemy.orm import Session
 
 
 class ClientService:

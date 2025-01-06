@@ -1,5 +1,6 @@
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
+
 from app.models.client import Client
 from app.models.order import Order
 

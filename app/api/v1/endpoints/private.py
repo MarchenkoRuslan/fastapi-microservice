@@ -1,8 +1,8 @@
+from typing import Any
+
+from app.db.session import get_db
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Any
-from app.db.session import get_db
-
 
 router = APIRouter()
 

@@ -1,4 +1,5 @@
 from datetime import date
+
 from app.models.client import Client
 from app.models.profile import Profile
 from app.models.verification import Verification, VerificationStatus

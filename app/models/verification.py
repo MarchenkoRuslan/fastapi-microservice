@@ -1,11 +1,13 @@
+import uuid
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import Column, String, DateTime, ForeignKey
+
+from app.db.base_class import Base
+from sqlalchemy import Column, DateTime
 from sqlalchemy import Enum as SQLEnum
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from app.db.base_class import Base
-import uuid
 
 
 class VerificationStatus(str, Enum):

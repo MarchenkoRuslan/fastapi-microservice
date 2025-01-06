@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
 from app.services.client import ClientService
+from sqlalchemy.orm import Session
 
 
 def test_get_by_binance_id(db: Session):

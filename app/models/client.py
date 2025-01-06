@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, DateTime
-from sqlalchemy.dialects.postgresql import UUID
-from app.db.base_class import Base
+import hashlib
 import uuid
 from datetime import datetime
-import hashlib
+
+from app.db.base_class import Base
+from sqlalchemy import Column, DateTime, String
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class Client(Base):

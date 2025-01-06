@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
-from app.services.survey import SurveyService
-from app.models.survey import Survey
 from uuid import uuid4
+
+from app.models.survey import Survey
+from app.services.survey import SurveyService
+from sqlalchemy.orm import Session
 
 
 def test_get_active_survey(db: Session):

@@ -1,5 +1,5 @@
-from fastapi import FastAPI
 from app.api.v1.router import api_router
+from fastapi import FastAPI
 
 app = FastAPI(
     title="KYC Service API",
