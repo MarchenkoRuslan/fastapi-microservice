@@ -1,8 +1,11 @@
+# Standard library imports
 from unittest.mock import AsyncMock, patch
 
+# Third-party imports
 import pytest
 
-from app.services.binance import BinanceService  # noqa: E402
+# Local imports
+from app.services.binance import BinanceService
 
 
 @pytest.mark.asyncio
