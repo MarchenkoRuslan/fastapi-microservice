@@ -1,5 +1,5 @@
 import pytest
-from typing import AsyncGenerator, Generator
+from typing import Generator
 from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
