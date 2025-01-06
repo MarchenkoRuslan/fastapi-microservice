@@ -1,0 +1,43 @@
+@startuml orderFlow
+start
+
+:Input order number;
+:Check order number with Binance API;
+
+if (Order exists?) then (No)
+    :API error response;
+    stop
+else (Yes)
+    :Download data;
+    if (User exist in DB?) then (No)
+        :Add user to DB;
+        :Questionare;
+        if (Answers is correct?) then (No)
+            :Response with error;
+            stop
+        else
+            :Create verification session;
+            :Redirect to KYC provider;
+            :Get data from KYC provider;
+            if (Data correct?) then (No)
+                :Response with error;
+                stop
+            else
+                :Update personal data;
+                :Make deal;
+                stop
+            endif
+        endif
+    else (Yes)
+        :Check volume;
+        if (> 10K or 5 transactions) then (Yes)
+            :Manual decision;
+            stop
+        else (No)
+            :Save order info to DB;
+            :Make deal;
+            stop
+        endif
+    endif
+endif
+@enduml
