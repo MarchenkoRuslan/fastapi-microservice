@@ -7,7 +7,7 @@ from app.models.order import Order
 def test_health_check(client):
     response = client.get("/api/v1/public/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+    assert response.json() == {"status": "healthy", "message": None, "data": None}
 
 
 def test_check_order_not_found(client):
@@ -31,7 +31,6 @@ def test_check_order_success(mock_get_order, client, db):
     test_order = Order(
         id=order_id,
         client_id=test_client.id,
-        binance_order_id="test_order",
         status="pending"
     )
     db.add(test_order)
@@ -46,7 +45,8 @@ def test_check_order_success(mock_get_order, client, db):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "pending"
-    assert "client_id" in data
+    assert data["data"] is not None
+    assert "client_id" in data["data"]
 
 
 def test_check_order_with_id(client, db):
