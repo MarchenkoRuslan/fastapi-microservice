@@ -1,42 +1,43 @@
 import pytest
-from typing import AsyncGenerator, Generator
+from typing import Generator
 from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import OperationalError
+import os
 
 from app.db.base import Base
 from app.main import app
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:9379992@localhost/kyc_service_test"
+# Используем переменные окружения для подключения к тестовой БД
+POSTGRES_USER = os.getenv("POSTGRES_USER", "test_user")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "test_password")
+POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
+POSTGRES_DB = os.getenv("POSTGRES_DB", "test_db")
 
-def create_test_database():
-    temp_engine = create_engine("postgresql://postgres:9379992@localhost/postgres")
-    with temp_engine.connect() as conn:
-        conn.execute(text("COMMIT"))  # Закрыть текущую транзакцию
-        conn.execute(text("DROP DATABASE IF EXISTS kyc_service_test"))
-        conn.execute(text("CREATE DATABASE kyc_service_test"))
+SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}"
 
-try:
-    create_test_database()
-except OperationalError:
-    print("Warning: Could not create test database. It might already exist.")
+test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+@pytest.fixture(scope="session", autouse=True)
+def create_tables():
+    Base.metadata.create_all(bind=test_engine)
+    yield
+    Base.metadata.drop_all(bind=test_engine)
 
 @pytest.fixture(scope="function")
-async def db() -> AsyncGenerator[Session, None]:
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+def db() -> Generator[Session, None, None]:
+    connection = test_engine.connect()
+    transaction = connection.begin()
+    session = TestingSessionLocal(bind=connection)
     
-    session = TestingSessionLocal()
     try:
         yield session
     finally:
         session.close()
-        Base.metadata.drop_all(bind=engine)
+        transaction.rollback()
+        connection.close()
 
 @pytest.fixture(scope="module")
 def client() -> Generator[TestClient, None, None]:

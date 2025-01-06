@@ -3,15 +3,19 @@ from uuid import UUID
 from datetime import datetime
 from typing import Optional
 
+
 class ClientBase(BaseModel):
     email: Optional[EmailStr] = None
     binance_user_id: Optional[str] = None
 
+
 class ClientCreate(ClientBase):
     pass
 
+
 class ClientUpdate(ClientBase):
     pass
+
 
 class ClientInDB(ClientBase):
     id: UUID

@@ -11,9 +11,7 @@ async def kyc_webhook(
     request: Request,
     db: Session = Depends(get_db)
 ) -> Any:
-    """
-    Обработчик вебхуков от KYC провайдера
-    """
+    """Обработчик вебхуков от KYC провайдера."""
     try:
         payload = await request.json()
         

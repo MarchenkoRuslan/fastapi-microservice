@@ -1,27 +1,23 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+import os
+
 
 class Settings(BaseSettings):
-    # PostgreSQL
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str = "kyc_service"
+    PROJECT_NAME: str = "KYC Service"
     
-    # Binance
-    BINANCE_API_KEY: str
-    BINANCE_API_SECRET: str
+    POSTGRES_SERVER: str = os.getenv("POSTGRES_HOST", "localhost")
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "app")
     
-    # KYC Provider
-    KYC_PROVIDER_API_KEY: Optional[str] = None
-    KYC_PROVIDER_API_URL: Optional[str] = None
-    
-    # Security
-    JWT_SECRET_KEY: str
-    
-    TESTING: bool = False
-    
+    BINANCE_API_KEY: str = os.getenv("BINANCE_API_KEY", "test_key")
+    BINANCE_API_SECRET: str = os.getenv("BINANCE_API_SECRET", "test_secret")
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "test_jwt_secret")
+    KYC_PROVIDER_API_KEY: str = os.getenv("KYC_PROVIDER_API_KEY", "test_kyc_key")
+    KYC_PROVIDER_API_URL: str = os.getenv("KYC_PROVIDER_API_URL", "http://test.com")
+
     class Config:
-        env_file = ".env"
+        case_sensitive = True
+
 
 settings = Settings() 
