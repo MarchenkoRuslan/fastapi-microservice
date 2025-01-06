@@ -10,12 +10,12 @@ async def test_get_p2p_order(mock_async_client):
     
     # Создаем мок для ответа
     mock_response = AsyncMock()
-    mock_response.json.return_value = {"data": {"orderStatus": "pending"}}
+    mock_response.json = lambda: {"data": {"orderStatus": "pending"}}
     mock_response.raise_for_status = AsyncMock()
     
     # Создаем мок для клиента
     mock_client = AsyncMock()
-    mock_client.post = AsyncMock(return_value=mock_response)
+    mock_client.post.return_value = mock_response
     
     # Настраиваем контекстный менеджер
     mock_async_client.return_value.__aenter__.return_value = mock_client
