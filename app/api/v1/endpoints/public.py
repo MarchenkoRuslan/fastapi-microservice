@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from app.db.session import get_db
-from app.schemas.response import OrderCheckResponse, VerificationResponse
+from app.schemas.response import ResponseModel, OrderCheckResponse, VerificationResponse
 from app.services.binance import BinanceService
 from app.services.client import ClientService
 from app.schemas.survey import SurveySubmission, SurveyData
@@ -143,12 +143,22 @@ async def submit_survey(
             detail=str(e)
         )
 
-@router.get("/health")
-def health_check():
+@router.get(
+    "/health",
+    response_model=ResponseModel,
+    summary="Проверка работоспособности",
+    description="Эндпоинт для проверки работоспособности сервиса"
+)
+def health_check() -> Any:
     """Проверка здоровья сервиса."""
     return {"status": "healthy"}
 
-@router.get("/orders/check/{order_id}")
+@router.get(
+    "/orders/check/{order_id}",
+    response_model=ResponseModel,
+    summary="Проверка статуса заказа",
+    description="Проверяет статус заказа по его ID"
+)
 async def check_order_status(
     order_id: str,
     db: Session = Depends(get_db)
