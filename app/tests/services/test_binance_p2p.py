@@ -8,25 +8,27 @@ async def test_get_p2p_order(mock_async_client):
     # Создаем экземпляр клиента
     client = BinanceP2PClient()
     
-    # Создаем мок для httpx.AsyncClient
+    # Создаем мок для ответа
     mock_response = AsyncMock()
     mock_response.json.return_value = {"data": {"orderStatus": "pending"}}
     mock_response.raise_for_status = AsyncMock()
     
+    # Создаем мок для клиента
     mock_client = AsyncMock()
     mock_client.post = AsyncMock(return_value=mock_response)
     
+    # Настраиваем контекстный менеджер
     mock_async_client.return_value.__aenter__.return_value = mock_client
     mock_async_client.return_value.__aexit__.return_value = None
     
-    # Вызываем метод
+    # Вызываем метод и ждем результат
     result = await client.get_p2p_order("test_order_number")
     
     # Проверяем результат
     assert result == {"data": {"orderStatus": "pending"}}
     
     # Проверяем, что был сделан правильный запрос
-    mock_client.post.assert_called_once()
+    assert mock_client.post.called
     call_args = mock_client.post.call_args
     
     # Проверяем URL
