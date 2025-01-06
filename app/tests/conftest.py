@@ -4,12 +4,18 @@ from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import os
 
 from app.db.base_class import Base
 from app.main import app
 
-# Используем тестовую базу данных
-SQLALCHEMY_DATABASE_URL = "postgresql://test_user:test_password@postgres/test_db"
+# Используем переменные окружения для подключения к тестовой БД
+POSTGRES_USER = os.getenv("POSTGRES_USER", "test_user")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "test_password")
+POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
+POSTGRES_DB = os.getenv("POSTGRES_DB", "test_db")
+
+SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}"
 
 test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
