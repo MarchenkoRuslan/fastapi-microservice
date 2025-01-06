@@ -30,8 +30,11 @@ lint:
   stage: lint
   script:
     - pip install flake8 black isort
-    - flake8 app
+    - echo "Running flake8..."
+    - flake8 app --config=setup.cfg
+    - echo "Running black..."
     - black --check app
+    - echo "Running isort..."
     - isort --check-only app
 
 test:
