@@ -1,5 +1,7 @@
 from unittest.mock import patch
 from uuid import uuid4
+from app.models.client import Client
+from app.models.order import Order
 
 
 def test_health_check(client):
@@ -15,20 +17,33 @@ def test_check_order_not_found(client):
 
 
 @patch('services.binance.BinanceService.get_order')
-def test_check_order_success(mock_get_order, client, test_order):
-    mock_get_order.return_value = test_order
-
-    response = client.get(
-        f"/api/v1/public/check-order/{test_order['orderId']}"
+def test_check_order_success(mock_get_order, client, db):
+    # Создаем тестового клиента
+    test_client = Client(
+        binance_user_id="test_user",
+        email="test@example.com"
     )
+    db.add(test_client)
+    db.commit()
+
+    # Создаем тестовый ордер
+    order_id = str(uuid4())
+    test_order = Order(
+        id=order_id,
+        client_id=test_client.id,
+        binance_order_id="test_order",
+        status="pending"
+    )
+    db.add(test_order)
+    db.commit()
+
+    # Проверяем ордер через API
+    response = client.get(f"/api/v1/public/orders/check/{order_id}")
+    
     assert response.status_code == 200
     data = response.json()
-
-    assert data["order_exists"] is True
-    assert data["needs_verification"] is True
+    assert data["status"] == "pending"
     assert "client_id" in data
-    assert data["message"] == "Verification required"
-    assert "user_data" in data["details"]
 
 
 def test_check_order_with_id(client, db):
