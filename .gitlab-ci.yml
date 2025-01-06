@@ -29,14 +29,15 @@ before_script:
 
 format:
   stage: format
-  script:
+  before_script:
+    - apt-get update && apt-get install -y git
+    - python -m venv venv
+    - . venv/bin/activate
+    - pip install --upgrade pip
     - pip install black
+  script:
     - black app
-    - git config --global user.email "ci@gitlab.com"
-    - git config --global user.name "GitLab CI"
-    - git add .
-    - git commit -m "Apply black formatting" || echo "No changes to commit"
-    - git push origin HEAD:$CI_COMMIT_REF_NAME || echo "No changes to push"
+    - echo "Code formatting completed"
 
 lint:
   stage: lint
