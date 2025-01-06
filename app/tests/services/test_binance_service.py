@@ -1,7 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from app.services.binance import BinanceService
+import pytest
+
+from app.services.binance import BinanceService  # noqa: E402
 
 
 @pytest.mark.asyncio
