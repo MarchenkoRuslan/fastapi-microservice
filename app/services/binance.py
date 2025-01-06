@@ -1,24 +1,68 @@
-from typing import Optional, Dict, Any
-from app.services.binance_p2p import BinanceP2PClient
+from typing import Dict, Any
+import time
+import hmac
+import hashlib
+from app.core.config import settings
+import httpx
+from app.core.logger import logger
 
 
 class BinanceService:
     def __init__(self):
-        self.p2p_client = BinanceP2PClient()
+        self.api_key = settings.BINANCE_API_KEY
+        self.api_secret = settings.BINANCE_SECRET_KEY
+        self.base_url = settings.BINANCE_API_HOST
 
-    async def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
-        """Получает информацию об ордере из Binance P2P."""
-        return await self.p2p_client.get_p2p_order(order_id)
+    def _generate_signature(self, params: Dict[str, Any]) -> str:
+        """Генерирует подпись для запроса к Binance API."""
+        query_string = '&'.join([f"{k}={v}" for k, v in sorted(params.items())])
+        return hmac.new(
+            self.api_secret.encode('utf-8'),
+            query_string.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
 
-    async def get_available_trades(
-        self,
-        fiat: str = "RUB",
-        trade_type: str = "BUY",
-        asset: str = "USDT"
-    ) -> Optional[Dict[str, Any]]:
-        """Получает список доступных P2P предложений."""
-        return await self.p2p_client.get_p2p_trades(
-            fiat=fiat,
-            trade_type=trade_type,
-            asset=asset
-        ) 
+    async def get_user_order_detail(self, order_number: str) -> Dict[str, Any]:
+        """
+        Получает детальную информацию об ордере.
+        
+        Args:
+            order_number: Номер ордера для проверки
+            
+        Returns:
+            Dict с информацией об ордере
+            
+        Raises:
+            Exception: если ордер не найден или произошла ошибка
+        """
+        try:
+            timestamp = int(time.time() * 1000)
+            params = {
+                "orderNumber": order_number,
+                "timestamp": timestamp
+            }
+            
+            signature = self._generate_signature(params)
+            params["signature"] = signature
+            
+            headers = {
+                "X-MBX-APIKEY": self.api_key,
+                "Content-Type": "application/json"
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/sapi/v1/c2c/orderMatch/getUserOrderDetail",
+                    params=params,
+                    headers=headers
+                )
+                
+                if response.status_code == 404:
+                    raise Exception("Order not found")
+                    
+                response.raise_for_status()
+                return response.json()
+                
+        except Exception as e:
+            logger.error(f"Error getting order details: {e}")
+            raise 

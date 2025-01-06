@@ -3,40 +3,36 @@ from typing import Any
 from sqlalchemy.orm import Session
 from app.schemas.response import ResponseModel
 from app.db.session import get_db
-from app.models.order import Order
-from uuid import UUID
+from app.services.binance import BinanceService
 
 router = APIRouter()
 
-@router.get("/health", response_model=ResponseModel)
-def health_check() -> Any:
-    return {
-        "status": "healthy",
-        "message": None,
-        "data": None
-    }
 
-@router.get("/orders/check/{order_id}", response_model=ResponseModel)
+@router.post("/checkOrder", response_model=ResponseModel)
 async def check_order(
-    order_id: str,
+    order_number: str,
     db: Session = Depends(get_db)
 ) -> Any:
-    if order_id == "nonexistent":
-        raise HTTPException(status_code=404, detail="Not Found")
-        
+    """
+    Проверяет существование ордера в Binance P2P.
+    
+    Args:
+        order_number: Номер ордера для проверки
+    
+    Returns:
+        Информация об ордере и продавце
+    """
     try:
-        order = db.query(Order).filter(Order.id == UUID(order_id)).first()
-        if not order:
-            return {
-                "status": "pending",
-                "message": None,
-                "data": {"client_id": None}
-            }
+        binance_service = BinanceService()
+        order_data = await binance_service.get_user_order_detail(order_number)
         
         return {
-            "status": order.order_status,
+            "status": "success",
             "message": None,
-            "data": {"client_id": str(order.client_id)}
+            "data": order_data
         }
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid order ID format") 
+    except Exception as e:
+        raise HTTPException(
+            status_code=404 if "Order not found" in str(e) else 500,
+            detail=str(e)
+        ) 
