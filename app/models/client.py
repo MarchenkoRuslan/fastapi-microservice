@@ -1,9 +1,8 @@
-from datetime import datetime
 from sqlalchemy import Column, String, DateTime
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from app.db.base_class import Base
 import uuid
+from datetime import datetime
 import hashlib
 
 

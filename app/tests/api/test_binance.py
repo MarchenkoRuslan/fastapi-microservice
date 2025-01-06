@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, AsyncMock
-from app.schemas.binance import OrderCheckRequest
+from fastapi.testclient import TestClient
 
 
 @pytest.mark.asyncio

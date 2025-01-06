@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 from typing import Any
-from app.db.session import get_db
+from sqlalchemy.orm import Session
+from app.schemas.response import ResponseModel, OrderCheckResponse
+from app.schemas.binance import OrderCheckRequest
 from app.services.binance import BinanceService
-from app.schemas.binance import OrderCheckRequest, OrderCheckResponse
+from app.db.session import get_db
+from app.models.order import Order
 
 router = APIRouter()
 
