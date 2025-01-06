@@ -27,10 +27,13 @@ cache:
     - venv/
 
 before_script:
+  - apt-get update
+  - apt-get install -y libpq-dev gcc python3-dev
   - python -V
   - python -m venv venv
   - . venv/bin/activate
   - pip install --upgrade pip
+  - pip install psycopg2-binary
   - pip install -r requirements.txt
   - pip install -e .
 
@@ -58,7 +61,7 @@ test:
   services:
     - postgres:13
   script:
-    - pip install pytest pytest-cov pytest-asyncio
+    - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
     - PYTHONPATH=$CI_PROJECT_DIR pytest -v --cov=app
 
 build:
