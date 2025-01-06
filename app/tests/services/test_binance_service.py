@@ -1,6 +1,5 @@
-from unittest.mock import AsyncMock, patch
-
 import pytest
+from unittest.mock import AsyncMock, patch
 
 from app.services.binance import BinanceService
 
