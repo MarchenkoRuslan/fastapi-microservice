@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     BINANCE_API_KEY: str = os.getenv("BINANCE_API_KEY", "")
     BINANCE_SECRET_KEY: str = os.getenv("BINANCE_SECRET_KEY", "")
     BINANCE_API_HOST: str = os.getenv("BINANCE_API_HOST", "https://api.binance.com")
+    BINANCE_API_SECRET: str = os.getenv("BINANCE_API_SECRET", "test_secret")
 
     class Config:
         case_sensitive = True
