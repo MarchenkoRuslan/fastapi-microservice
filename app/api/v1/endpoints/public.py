@@ -1,38 +1,40 @@
 from fastapi import APIRouter, Depends, HTTPException
-from typing import Any
 from sqlalchemy.orm import Session
-from app.schemas.response import ResponseModel
+from typing import Any
 from app.db.session import get_db
 from app.services.binance import BinanceService
+from app.schemas.binance import OrderCheckRequest, OrderCheckResponse
 
 router = APIRouter()
 
 
-@router.post("/checkOrder", response_model=ResponseModel)
+@router.post("/checkOrder", response_model=OrderCheckResponse)
 async def check_order(
-    order_number: str,
+    request: OrderCheckRequest,
     db: Session = Depends(get_db)
 ) -> Any:
     """
     Проверяет существование ордера в Binance P2P.
     
     Args:
-        order_number: Номер ордера для проверки
+        request: OrderCheckRequest с номером ордера
     
     Returns:
-        Информация об ордере и продавце
+        OrderCheckResponse с информацией об ордере и продавце
+        
+    Raises:
+        HTTPException: если ордер не найден или произошла ошибка
     """
     try:
         binance_service = BinanceService()
-        order_data = await binance_service.get_user_order_detail(order_number)
+        order_data = await binance_service.get_user_order_detail(request.order_number)
         
-        return {
-            "status": "success",
-            "message": None,
-            "data": order_data
-        }
+        return OrderCheckResponse(
+            status="success",
+            data=order_data
+        )
     except Exception as e:
-        raise HTTPException(
-            status_code=404 if "Order not found" in str(e) else 500,
-            detail=str(e)
+        return OrderCheckResponse(
+            status="error",
+            error=str(e)
         ) 
