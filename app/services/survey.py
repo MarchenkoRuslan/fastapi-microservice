@@ -9,7 +9,7 @@ class SurveyService:
         self.db = db
 
     def get_active_survey(self) -> Optional[Survey]:
-        return self.db.query(Survey).filter(Survey.active.is_(True)).first()
+        return self.db.query(Survey).filter(Survey.is_active == True).first()
 
     def calculate_score(
         self,
