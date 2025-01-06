@@ -31,7 +31,7 @@ def test_check_order_success(mock_get_order, client, db):
     test_order = Order(
         id=order_id,
         client_id=test_client.id,
-        status="pending"
+        order_status="pending"
     )
     db.add(test_order)
     db.commit()
