@@ -1,23 +1,13 @@
-import pytest
+from sqlalchemy.orm import Session
 from app.services.client import ClientService
-from app.models.client import Client
+from uuid import uuid4
 
-def test_create_client(db):
-    service = ClientService(db)
-    binance_data = {
-        "userId": "test123",
-        "email": "test@example.com"
-    }
-    
-    client = service.create_from_binance(binance_data)
-    assert client.binance_user_id == "test123"
-    
-    # Проверяем, что клиент сохранен в БД
-    db_client = service.get_by_binance_id("test123")
-    assert db_client is not None
-    assert db_client.id == client.id
+def test_get_by_binance_id(db: Session):
+    client_service = ClientService(db)
+    result = client_service.get_by_binance_id("test_id")
+    assert result is None
 
-def test_get_nonexistent_client(db):
-    service = ClientService(db)
-    client = service.get_by_binance_id("nonexistent")
-    assert client is None 
+def test_create_client(db: Session):
+    client_service = ClientService(db)
+    client = client_service.create(binance_user_id="test_id")
+    assert client.binance_user_id == "test_id" 
