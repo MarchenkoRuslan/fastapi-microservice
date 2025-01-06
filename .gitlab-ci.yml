@@ -8,6 +8,11 @@ variables:
   POSTGRES_HOST: "postgres"
   DATABASE_URL: "postgresql://test_user:test_password@postgres:5432/test_db"
   PYTHONPATH: $CI_PROJECT_DIR
+  BINANCE_API_KEY: "test_key"
+  BINANCE_API_SECRET: "test_secret"
+  JWT_SECRET_KEY: "test_jwt_secret"
+  KYC_PROVIDER_API_KEY: "test_kyc_key"
+  KYC_PROVIDER_API_URL: "http://test.com"
 
 stages:
   - format
@@ -61,6 +66,9 @@ test:
     POSTGRES_USER: "test_user"
     POSTGRES_PASSWORD: "test_password"
     POSTGRES_HOST: "postgres"
+    BINANCE_API_KEY: "test_key"
+    BINANCE_API_SECRET: "test_secret"
+    JWT_SECRET_KEY: "test_jwt_secret"
   script:
     - echo "Waiting for postgres..."
     - apt-get update && apt-get install -y postgresql-client
