@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import patch, AsyncMock
-from fastapi.testclient import TestClient
 
 
 @pytest.mark.asyncio
