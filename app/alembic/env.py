@@ -13,9 +13,16 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 def get_url():
-    return f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}/{settings.POSTGRES_DB}"
+    """Получает URL для подключения к базе данных."""
+    return (
+        f"postgresql://{settings.POSTGRES_USER}:"
+        f"{settings.POSTGRES_PASSWORD}@"
+        f"{settings.POSTGRES_SERVER}/"
+        f"{settings.POSTGRES_DB}"
+    )
 
 def run_migrations_offline():
+    """Запускает миграции в 'offline' режиме."""
     url = get_url()
     context.configure(
         url=url,
@@ -28,6 +35,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 def run_migrations_online():
+    """Запускает миграции в 'online' режиме."""
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
@@ -38,7 +46,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata
         )
 
         with context.begin_transaction():

@@ -3,6 +3,7 @@ from uuid import UUID
 from datetime import date
 from typing import Optional
 
+
 class ProfileBase(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
@@ -10,11 +11,14 @@ class ProfileBase(BaseModel):
     country: Optional[str] = None
     address: Optional[str] = None
 
+
 class ProfileCreate(ProfileBase):
     client_id: UUID
 
+
 class ProfileUpdate(ProfileBase):
     pass
+
 
 class ProfileInDB(ProfileBase):
     id: UUID

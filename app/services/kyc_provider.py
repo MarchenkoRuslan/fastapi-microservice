@@ -1,7 +1,7 @@
 import httpx
 from typing import Optional, Dict, Any
-from uuid import UUID
 from app.core.config import settings
+
 
 class KYCProviderService:
     def __init__(self):
@@ -11,11 +11,12 @@ class KYCProviderService:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-    
-    async def create_verification_session(self, client_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Создает сессию верификации у KYC провайдера
-        """
+
+    async def create_verification_session(
+        self,
+        client_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """Создает сессию верификации у KYC провайдера."""
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
@@ -28,11 +29,12 @@ class KYCProviderService:
         except Exception as e:
             print(f"Error creating KYC session: {e}")
             return None
-    
-    async def check_verification_status(self, session_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Проверяет статус верификации
-        """
+
+    async def check_verification_status(
+        self,
+        session_id: str
+    ) -> Optional[Dict[str, Any]]:
+        """Проверяет статус верификации."""
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(

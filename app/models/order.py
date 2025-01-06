@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 import uuid
 
+
 class Order(Base):
     __tablename__ = "orders"
 
@@ -13,6 +14,10 @@ class Order(Base):
     amount = Column(Float)
     currency = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
 
     client = relationship("Client", back_populates="orders") 

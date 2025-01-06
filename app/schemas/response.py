@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, Any, Dict
 from uuid import UUID
-from app.db.session import get_db
-from app.db.base import Base
+
 
 class OrderCheckResponse(BaseModel):
     order_exists: bool
@@ -10,6 +9,7 @@ class OrderCheckResponse(BaseModel):
     client_id: Optional[UUID] = None
     message: str
     details: Optional[Dict[str, Any]] = None
+
 
 class VerificationResponse(BaseModel):
     status: str
