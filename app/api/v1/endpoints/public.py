@@ -10,7 +10,11 @@ router = APIRouter()
 
 @router.get("/health", response_model=ResponseModel)
 def health_check() -> Any:
-    return {"status": "healthy", "message": None, "data": None}
+    return {
+        "status": "healthy",
+        "message": None,
+        "data": None
+    }
 
 @router.get("/orders/check/{order_id}", response_model=ResponseModel)
 async def check_order(

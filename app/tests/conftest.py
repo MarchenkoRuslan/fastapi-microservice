@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 
-from app.db.base_class import Base
+from app.db.base import Base
 from app.main import app
 
 # Используем переменные окружения для подключения к тестовой БД
@@ -20,17 +20,24 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{PO
 test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
-@pytest.fixture(scope="function")
-async def db() -> AsyncGenerator[Session, None]:
-    Base.metadata.drop_all(bind=test_engine)
+@pytest.fixture(scope="session", autouse=True)
+def create_tables():
     Base.metadata.create_all(bind=test_engine)
+    yield
+    Base.metadata.drop_all(bind=test_engine)
+
+@pytest.fixture(scope="function")
+def db() -> Generator[Session, None, None]:
+    connection = test_engine.connect()
+    transaction = connection.begin()
+    session = TestingSessionLocal(bind=connection)
     
-    session = TestingSessionLocal()
     try:
         yield session
     finally:
         session.close()
-        Base.metadata.drop_all(bind=test_engine)
+        transaction.rollback()
+        connection.close()
 
 @pytest.fixture(scope="module")
 def client() -> Generator[TestClient, None, None]:

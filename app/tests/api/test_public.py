@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock, MagicMock
 from uuid import uuid4
 from app.models.client import Client
 from app.models.order import Order
@@ -16,8 +16,16 @@ def test_check_order_not_found(client):
     assert response.json()["detail"] == "Not Found"
 
 
+@patch('app.services.binance_p2p.BinanceP2PClient')
 @patch('app.services.binance.BinanceService.get_order')
-def test_check_order_success(mock_get_order, client, db):
+async def test_check_order_success(mock_get_order, mock_p2p_client, client, db):
+    # Настраиваем мок для BinanceP2PClient
+    mock_instance = MagicMock()
+    mock_instance.get_p2p_order = AsyncMock(
+        return_value={"data": {"orderStatus": "pending"}}
+    )
+    mock_p2p_client.return_value = mock_instance
+
     # Создаем тестового клиента
     test_client = Client(
         binance_user_id="test_user",
@@ -36,7 +44,7 @@ def test_check_order_success(mock_get_order, client, db):
     db.add(test_order)
     db.commit()
 
-    # Настраиваем мок
+    # Настраиваем мок для BinanceService
     mock_get_order.return_value = {"status": "pending"}
 
     # Проверяем ордер через API
