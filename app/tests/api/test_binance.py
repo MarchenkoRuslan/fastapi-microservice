@@ -1,12 +1,13 @@
-from unittest.mock import AsyncMock, patch
-
 import pytest
+from fastapi.testclient import TestClient
+from unittest.mock import patch, AsyncMock
 
 
-@pytest.mark.asyncio
-async def test_check_order_success(client):
-    response = client.post("/api/v1/public/checkOrder", 
-                         json={"order_number": "123456"})
+def test_check_order_success(client):
+    response = client.post(
+        "/api/v1/public/checkOrder",
+        json={"order_number": "123456"},
+    )
     assert response.status_code == 200
 
 

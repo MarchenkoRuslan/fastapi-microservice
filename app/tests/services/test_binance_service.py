@@ -15,8 +15,10 @@ async def test_get_user_order_detail():
         }
     }
     
-    with patch('app.services.binance.BinanceService.get_user_order_detail', 
-               return_value=mock_response) as mock:
+    with patch(
+        "app.services.binance.BinanceService.get_user_order_detail",
+        return_value=mock_response,
+    ) as mock:
         result = await mock("123456")
         assert result == mock_response
 
