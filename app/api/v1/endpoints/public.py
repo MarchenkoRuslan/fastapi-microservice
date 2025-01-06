@@ -96,7 +96,6 @@ async def submit_survey(
             )
 
         score = survey_service.calculate_score(submission.responses, survey)
-
         survey_service.save_responses(
             submission.client_id,
             survey.id,
@@ -123,7 +122,7 @@ async def submit_survey(
         session = await kyc_service.create_verification_session({
             "client_id": str(client.id),
             "first_name": client.profile.first_name if client.profile else None,
-            "last_name": client.profile.last_name if client.profile else None,
+            "last_name": client.profile.last_name if client.profile else None
         })
 
         if not session:
