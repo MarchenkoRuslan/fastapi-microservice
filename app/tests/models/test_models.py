@@ -5,10 +5,7 @@ from app.models.verification import Verification, VerificationStatus
 
 
 def test_client_creation(db):
-    client = Client(
-        binance_user_id="test123",
-        email="test@example.com"
-    )
+    client = Client(binance_user_id="test123", email="test@example.com")
     db.add(client)
     db.commit()
 
@@ -27,7 +24,7 @@ def test_profile_creation(db):
         first_name="John",
         last_name="Doe",
         birth_date=date(1990, 1, 1),
-        country="US"
+        country="US",
     )
     db.add(profile)
     db.commit()
@@ -44,7 +41,7 @@ def test_verification_status_flow(db):
     verification = Verification(
         client_id=client.id,
         provider_session_id="session123",
-        status=VerificationStatus.PENDING
+        status=VerificationStatus.PENDING,
     )
     db.add(verification)
     db.commit()
@@ -55,4 +52,4 @@ def test_verification_status_flow(db):
     db.commit()
 
     updated_verification = db.query(Verification).first()
-    assert updated_verification.status == VerificationStatus.COMPLETED 
+    assert updated_verification.status == VerificationStatus.COMPLETED

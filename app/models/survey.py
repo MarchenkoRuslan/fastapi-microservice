@@ -22,16 +22,8 @@ class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    client_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("clients.id"),
-        nullable=False
-    )
-    survey_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("surveys.id"),
-        nullable=False
-    )
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
+    survey_id = Column(UUID(as_uuid=True), ForeignKey("surveys.id"), nullable=False)
 
     responses = Column(JSONB, nullable=False)
     score = Column(Integer)
@@ -39,4 +31,4 @@ class SurveyResponse(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     client = relationship("Client", back_populates="survey_responses")
-    survey = relationship("Survey") 
+    survey = relationship("Survey")

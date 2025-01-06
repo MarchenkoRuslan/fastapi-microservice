@@ -12,6 +12,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
+
 def get_url():
     """Получает URL для подключения к базе данных."""
     return (
@@ -20,6 +21,7 @@ def get_url():
         f"{settings.POSTGRES_SERVER}/"
         f"{settings.POSTGRES_DB}"
     )
+
 
 def run_migrations_offline():
     """Запускает миграции в 'offline' режиме."""
@@ -34,6 +36,7 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
+
 def run_migrations_online():
     """Запускает миграции в 'online' режиме."""
     configuration = config.get_section(config.config_ini_section)
@@ -45,15 +48,13 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
 
+
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online() 
+    run_migrations_online()

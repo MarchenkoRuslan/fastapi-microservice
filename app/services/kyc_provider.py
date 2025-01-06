@@ -9,12 +9,11 @@ class KYCProviderService:
         self.api_url = settings.KYC_PROVIDER_API_URL
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
     async def create_verification_session(
-        self,
-        client_data: Dict[str, Any]
+        self, client_data: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         """Создает сессию верификации у KYC провайдера."""
         try:
@@ -22,7 +21,7 @@ class KYCProviderService:
                 response = await client.post(
                     f"{self.api_url}/verification/session",
                     json=client_data,
-                    headers=self.headers
+                    headers=self.headers,
                 )
                 response.raise_for_status()
                 return response.json()
@@ -31,18 +30,17 @@ class KYCProviderService:
             return None
 
     async def check_verification_status(
-        self,
-        session_id: str
+        self, session_id: str
     ) -> Optional[Dict[str, Any]]:
         """Проверяет статус верификации."""
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
                     f"{self.api_url}/verification/status/{session_id}",
-                    headers=self.headers
+                    headers=self.headers,
                 )
                 response.raise_for_status()
                 return response.json()
         except Exception as e:
             print(f"Error checking verification status: {e}")
-            return None 
+            return None

@@ -10,4 +10,4 @@ app = FastAPI(
     redoc_url="/api/v1/redoc",
 )
 
-app.include_router(api_router) 
+app.include_router(api_router)

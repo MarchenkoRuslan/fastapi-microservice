@@ -16,32 +16,24 @@ class BinanceP2PClient:
 
     def _generate_signature(self, params: Dict[str, Any]) -> str:
         """Генерирует подпись для запроса."""
-        query_string = '&'.join([f"{k}={v}" for k, v in params.items()])
+        query_string = "&".join([f"{k}={v}" for k, v in params.items()])
         return hmac.new(
-            self.api_secret.encode('utf-8'),
-            query_string.encode('utf-8'),
-            hashlib.sha256
+            self.api_secret.encode("utf-8"),
+            query_string.encode("utf-8"),
+            hashlib.sha256,
         ).hexdigest()
 
     async def get_p2p_order(self, order_number: str) -> Optional[Dict[str, Any]]:
         """Получает информацию о P2P ордере."""
         try:
             timestamp = int(time.time() * 1000)
-            params = {
-                "orderNumber": order_number,
-                "timestamp": timestamp
-            }
-            
-            headers = {
-                "X-MBX-APIKEY": self.api_key,
-                "Content-Type": "application/json"
-            }
-            
+            params = {"orderNumber": order_number, "timestamp": timestamp}
+
+            headers = {"X-MBX-APIKEY": self.api_key, "Content-Type": "application/json"}
+
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.p2p_url}/v1/private/get-order",
-                    json=params,
-                    headers=headers
+                    f"{self.p2p_url}/v1/private/get-order", json=params, headers=headers
                 )
                 response.raise_for_status()
                 return response.json()
@@ -54,7 +46,7 @@ class BinanceP2PClient:
         fiat: str = "RUB",
         trade_type: str = "BUY",
         asset: str = "USDT",
-        rows: int = 10
+        rows: int = 10,
     ) -> Optional[Dict[str, Any]]:
         """Получает список доступных P2P предложений."""
         try:
@@ -62,16 +54,15 @@ class BinanceP2PClient:
                 "fiat": fiat,
                 "tradeType": trade_type,
                 "asset": asset,
-                "rows": rows
+                "rows": rows,
             }
 
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.p2p_url}/v1/public/ads",
-                    json=params
+                    f"{self.p2p_url}/v1/public/ads", json=params
                 )
                 response.raise_for_status()
                 return response.json()
         except Exception as e:
             logger.error(f"Error getting P2P trades: {e}")
-            return None 
+            return None

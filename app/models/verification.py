@@ -19,16 +19,9 @@ class Verification(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"))
-    status = Column(
-        SQLEnum(VerificationStatus),
-        default=VerificationStatus.PENDING
-    )
+    status = Column(SQLEnum(VerificationStatus), default=VerificationStatus.PENDING)
     provider_session_id = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    client = relationship("Client", back_populates="verifications") 
+    client = relationship("Client", back_populates="verifications")

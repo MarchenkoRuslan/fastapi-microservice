@@ -4,18 +4,11 @@ from typing import Optional, Dict, Any
 
 class OrderCheckRequest(BaseModel):
     order_number: str = Field(
-        ...,
-        description="Номер ордера Binance P2P",
-        min_length=5,
-        max_length=50
+        ..., description="Номер ордера Binance P2P", min_length=5, max_length=50
     )
 
     class Config:
-        json_schema_extra = {
-            "example": {
-                "order_number": "123456789"
-            }
-        }
+        json_schema_extra = {"example": {"order_number": "123456789"}}
 
 
 class OrderCheckResponse(BaseModel):
@@ -32,7 +25,7 @@ class OrderCheckResponse(BaseModel):
                     "sellerName": "John Doe",
                     "sellerNickname": "johndoe",
                     "sellerMobilePhone": "+1234567890",
-                    "status": "COMPLETED"
-                }
+                    "status": "COMPLETED",
+                },
             }
-        } 
+        }

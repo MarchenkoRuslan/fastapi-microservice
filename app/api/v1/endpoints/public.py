@@ -35,31 +35,22 @@ router = APIRouter()
             "status": "COMPLETED"
         }
     }
-    """
+    """,
 )
-async def check_order(
-    request: OrderCheckRequest,
-    db: Session = Depends(get_db)
-) -> Any:
+async def check_order(request: OrderCheckRequest, db: Session = Depends(get_db)) -> Any:
     """
     Проверяет существование ордера в Binance P2P.
-    
+
     Args:
         request: OrderCheckRequest с номером ордера
-    
+
     Returns:
         ResponseModel с информацией об ордере и продавце
     """
     try:
         binance_service = BinanceService()
         order_data = await binance_service.get_user_order_detail(request.order_number)
-        
-        return ResponseModel(
-            status="success",
-            data=order_data
-        )
+
+        return ResponseModel(status="success", data=order_data)
     except Exception as e:
-        return ResponseModel(
-            status="error",
-            message=str(e)
-        ) 
+        return ResponseModel(status="error", message=str(e))

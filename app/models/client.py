@@ -15,7 +15,9 @@ class Client(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     @staticmethod
-    def generate_binance_hash(seller_name: str, seller_nickname: str, seller_mobile: str) -> str:
+    def generate_binance_hash(
+        seller_name: str, seller_nickname: str, seller_mobile: str
+    ) -> str:
         """Генерирует хеш на основе данных продавца из Binance."""
         combined = f"{seller_name}{seller_nickname}{seller_mobile}"
-        return hashlib.md5(combined.encode()).hexdigest() 
+        return hashlib.md5(combined.encode()).hexdigest()

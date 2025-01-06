@@ -25,4 +25,4 @@ class ProfileInDB(ProfileBase):
     client_id: UUID
 
     class Config:
-        from_attributes = True 
+        from_attributes = True

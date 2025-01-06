@@ -6,4 +6,4 @@ from app.models.survey import Survey
 from app.models.verification import Verification
 
 # Импортируем все модели здесь, чтобы Alembic мог их найти
-__all__ = ["Base", "Client", "Order", "Profile", "Survey", "Verification"] 
+__all__ = ["Base", "Client", "Order", "Profile", "Survey", "Verification"]
