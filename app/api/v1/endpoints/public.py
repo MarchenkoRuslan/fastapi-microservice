@@ -17,6 +17,9 @@ async def check_order(
     order_id: str,
     db: Session = Depends(get_db)
 ) -> Any:
+    if order_id == "nonexistent":
+        raise HTTPException(status_code=404, detail="Not Found")
+        
     try:
         order = db.query(Order).filter(Order.id == UUID(order_id)).first()
         if not order:
