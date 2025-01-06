@@ -16,7 +16,7 @@ def test_check_order_not_found(client):
     assert response.json()["detail"] == "Not Found"
 
 
-@patch('services.binance.BinanceService.get_order')
+@patch('app.services.binance.BinanceService.get_order')
 def test_check_order_success(mock_get_order, client, db):
     # Создаем тестового клиента
     test_client = Client(
@@ -36,6 +36,9 @@ def test_check_order_success(mock_get_order, client, db):
     )
     db.add(test_order)
     db.commit()
+
+    # Настраиваем мок
+    mock_get_order.return_value = {"status": "pending"}
 
     # Проверяем ордер через API
     response = client.get(f"/api/v1/public/orders/check/{order_id}")
