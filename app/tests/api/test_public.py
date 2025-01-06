@@ -49,11 +49,10 @@ def test_check_order_success(mock_get_order, client, db):
     assert "client_id" in data["data"]
 
 
-def test_check_order_with_id(client, db):
+def test_check_order_with_id(client):
     order_id = str(uuid4())
     response = client.get(f"/api/v1/public/orders/check/{order_id}")
-
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "pending"
-    assert "client_id" in data 
+    assert "client_id" in data["data"] 
