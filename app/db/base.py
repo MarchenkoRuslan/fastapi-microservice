@@ -1,12 +1,9 @@
-from sqlalchemy import create_engine
-from app.core.config import settings
+from app.db.base_class import Base
+from app.models.client import Client
+from app.models.order import Order
+from app.models.profile import Profile
+from app.models.survey import Survey
+from app.models.verification import Verification
 
-
-SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{settings.POSTGRES_USER}:"
-    f"{settings.POSTGRES_PASSWORD}@"
-    f"{settings.POSTGRES_SERVER}/"
-    f"{settings.POSTGRES_DB}"
-)
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL) 
+# Импортируем все модели здесь, чтобы Alembic мог их найти
+__all__ = ["Base", "Client", "Order", "Profile", "Survey", "Verification"] 
