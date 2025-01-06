@@ -2,80 +2,39 @@ image: python:3.11-slim
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
-  POSTGRES_DB: "test_db"
-  POSTGRES_USER: "test_user"
-  POSTGRES_PASSWORD: "test_password"
-  POSTGRES_HOST: "postgres"
-  DATABASE_URL: "postgresql://test_user:test_password@postgres:5432/test_db"
-  PYTHONPATH: $CI_PROJECT_DIR
-  BINANCE_API_KEY: "test_key"
-  BINANCE_API_SECRET: "test_secret"
-  JWT_SECRET_KEY: "test_jwt_secret"
-  KYC_PROVIDER_API_KEY: "test_kyc_key"
-  KYC_PROVIDER_API_URL: "http://test.com"
-
-stages:
-  - format
-  - lint
-  - test
-  - build
-  - deploy
 
 cache:
   paths:
     - .pip-cache/
-    - venv/
+
+stages:
+  - lint
+  - test
+  - build
 
 before_script:
-  - apt-get update
-  - apt-get install -y libpq-dev gcc python3-dev
   - python -V
-  - python -m venv venv
-  - . venv/bin/activate
-  - pip install --upgrade pip
-  - pip install psycopg2-binary
   - pip install -r requirements.txt
-  - pip install -e .
-
-format:
-  stage: format
-  before_script:
-    - apt-get update && apt-get install -y git
-    - python -m venv venv
-    - . venv/bin/activate
-    - pip install --upgrade pip
-    - pip install black
-  script:
-    - black app
-    - echo "Code formatting completed"
 
 lint:
   stage: lint
   script:
-    - pip install flake8
-    - echo "Running flake8..."
-    - flake8 app --config=setup.cfg
+    - pip install flake8 black isort
+    - flake8 app
+    - black --check app
+    - isort --check-only app
 
 test:
   stage: test
   services:
-    - name: postgres:13
-      alias: postgres
+    - postgres:13
   variables:
-    POSTGRES_DB: "test_db"
-    POSTGRES_USER: "test_user"
-    POSTGRES_PASSWORD: "test_password"
-    POSTGRES_HOST: "postgres"
-    BINANCE_API_KEY: "test_key"
-    BINANCE_API_SECRET: "test_secret"
-    JWT_SECRET_KEY: "test_jwt_secret"
+    POSTGRES_DB: test_db
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test_password
+    POSTGRES_HOST: postgres
   script:
-    - echo "Waiting for postgres..."
-    - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h postgres -p 5432; do sleep 1; done
-    - echo "PostgreSQL is ready"
-    - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
-    - PYTHONPATH=$CI_PROJECT_DIR pytest -v --cov=app
+    - pytest app/tests -v --cov=app
 
 build:
   stage: build
@@ -83,12 +42,4 @@ build:
     - docker build -t kyc-service .
   only:
     - main
-    - develop
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploy to production"
-  only:
-    - main
-  when: manual 
+    - develop 
