@@ -1,6 +1,7 @@
-from app.services.binance import BinanceService
 import pytest
 from unittest.mock import AsyncMock, patch
+
+from app.services.binance import BinanceService
 
 
 @pytest.mark.asyncio
