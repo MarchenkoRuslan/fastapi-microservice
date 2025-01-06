@@ -1,6 +1,5 @@
-from unittest.mock import AsyncMock, patch
-
 import pytest
+from unittest.mock import patch, AsyncMock
 from app.services.binance import BinanceService
 
 
@@ -11,10 +10,10 @@ async def test_get_user_order_detail():
             "orderNumber": "123456",
             "sellerName": "TestSeller",
             "sellerNickname": "test_nick",
-            "sellerMobilePhone": "+1234567890"
+            "sellerMobilePhone": "+1234567890",
         }
     }
-    
+
     with patch(
         "app.services.binance.BinanceService.get_user_order_detail",
         return_value=mock_response,
