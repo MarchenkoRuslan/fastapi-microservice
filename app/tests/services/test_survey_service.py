@@ -11,6 +11,10 @@ def test_get_active_survey(db: Session):
 def test_calculate_score(db: Session):
     survey_service = SurveyService(db)
     responses = [{"question": "test", "answer": "test"}]
-    survey = Survey(id=uuid4(), questions=[{"text": "test"}])
+    
+    # Создаем опрос с вопросами через колонку JSON
+    survey = Survey(id=uuid4(), title="Test Survey")
+    survey.questions = [{"text": "test"}]  # Устанавливаем вопросы после создания
+    
     score = survey_service.calculate_score(responses, survey)
     assert isinstance(score, int) 

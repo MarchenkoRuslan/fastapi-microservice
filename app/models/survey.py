@@ -1,25 +1,21 @@
-from datetime import datetime
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, String, JSON, Boolean, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 import uuid
+from datetime import datetime
 
 
 class Survey(Base):
     __tablename__ = "surveys"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    active = Column(Boolean, default=True)
-    title = Column(String, nullable=False)
-    content = Column(JSONB, nullable=False)
-
+    title = Column(String)
+    description = Column(String, nullable=True)
+    questions = Column(JSON, default=list)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class SurveyResponse(Base):
