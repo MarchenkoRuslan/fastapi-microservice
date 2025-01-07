@@ -1,56 +1,30 @@
-services:
-  - postgres:latest
+image: python:3.11
 
-image: python:3.11-slim
+services:
+  - postgres:15
 
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
   POSTGRES_DB: test_db
   POSTGRES_USER: ${DB_USER}
   POSTGRES_PASSWORD: ${DB_PASSWORD}
   DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/test_db"
-
-cache:
-  paths:
-    - .pip-cache/
+  POSTGRES_HOST_AUTH_METHOD: trust
 
 stages:
   - lint
   - test
-  - build
-
-before_script:
-  - python -V
-  - pip install -r requirements.txt
 
 lint:
   stage: lint
   script:
-    - pip install flake8 black isort
-    - flake8 app
-    - black --check app
-    - isort --check-only app
+    - pip install pre-commit
+    - pre-commit install
+    - pre-commit run --all-files
 
 test:
   stage: test
-  services:
-    - postgres:13
-  variables:
-    POSTGRES_DB: "test_db"
-    POSTGRES_USER: "test_user"
-    POSTGRES_PASSWORD: "test_password"
-    POSTGRES_HOST: "postgres"
-    DATABASE_URL: "postgresql://test_user:test_password@postgres:5432/test_db"
-    PYTHONPATH: $CI_PROJECT_DIR
   script:
+    - pip install -r requirements.txt
     - pip install -e .
     - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
-    - pytest -v --cov=app
-
-build:
-  stage: build
-  script:
-    - docker build -t kyc-service .
-  only:
-    - main
-    - develop 
+    - pytest -v --cov=app 
