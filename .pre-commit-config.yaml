@@ -15,7 +15,7 @@ repos:
     rev: v2.2.1
     hooks:
     -   id: autoflake
-        entry: autoflake.exe
+        entry: python -m autoflake
         language: system
         args: [
             "--in-place",
