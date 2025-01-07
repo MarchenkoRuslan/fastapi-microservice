@@ -15,7 +15,7 @@ repos:
     rev: v2.2.1
     hooks:
     -   id: autoflake
-        entry: venv/Scripts/autoflake.exe
+        entry: autoflake
         language: system
         args: [
             "--in-place",
