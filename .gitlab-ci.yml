@@ -1,7 +1,7 @@
 image: python:3.11
 
 services:
-  - postgres:15
+  - postgres:17
 
 variables:
   POSTGRES_DB: test_db
@@ -27,4 +27,4 @@ test:
     - pip install -r requirements.txt
     - pip install -e .
     - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
-    - pytest -v --cov=app 
+    - pytest -v --cov=app
