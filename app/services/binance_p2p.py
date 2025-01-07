@@ -3,7 +3,6 @@ from typing import Any, Dict, Optional
 
 import aiohttp
 import httpx
-from app.core.logger import logger
 
 logger = logging.getLogger(__name__)
 
