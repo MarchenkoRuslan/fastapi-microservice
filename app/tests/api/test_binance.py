@@ -1,29 +1,28 @@
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import pytest
+from app.main import app
+from fastapi.testclient import TestClient
 
-
-def test_check_order_success(client):
-    response = client.post(
-        "/api/v1/public/checkOrder",
-        json={"order_number": "123456"},
-    )
-    assert response.status_code == 200
+client = TestClient(app)
 
 
 @pytest.mark.asyncio
-async def test_check_order_not_found(client):
+async def test_check_order_success():
     with patch(
-        "app.services.binance.BinanceService.get_user_order_detail",
-        new_callable=AsyncMock,
+        "app.services.binance_service.BinanceService.get_user_order_detail"
     ) as mock_get_order:
-        mock_get_order.side_effect = Exception("Order not found")
-
-        response = await client.post(
-            "/api/v1/checkOrder", json={"order_number": "invalid"}
-        )
-
+        mock_get_order.return_value = {"orderNumber": "123", "status": "COMPLETED"}
+        response = client.get("/api/v1/binance/check-order/123")
         assert response.status_code == 200
-        data = response.json()
-        assert data["status"] == "error"
-        assert "Order not found" in data["error"]
+        assert response.json()["status"] == "COMPLETED"
+
+
+@pytest.mark.asyncio
+async def test_check_order_not_found():
+    with patch(
+        "app.services.binance_service.BinanceService.get_user_order_detail"
+    ) as mock_get_order:
+        mock_get_order.return_value = None
+        response = client.get("/api/v1/binance/check-order/123")
+        assert response.status_code == 404

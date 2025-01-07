@@ -1,4 +1,5 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
+from uuid import uuid4
 
 from app.models.client import Client
 from sqlalchemy.orm import Session
@@ -8,15 +9,13 @@ class ClientService:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_binance_id(self, binance_id: str) -> Optional[Client]:
+    def get_by_binance_id(self, binance_id: str) -> Client:
         """Получает клиента по Binance ID."""
-        return (
-            self.db.query(Client).filter(Client.binance_user_id == binance_id).first()
-        )
+        return self.db.query(Client).filter(Client.binance_id == binance_id).first()
 
-    def create(self, binance_user_id: str) -> Client:
+    def create(self, binance_id: str) -> Client:
         """Создает нового клиента."""
-        client = Client(binance_user_id=binance_user_id)
+        client = Client(id=uuid4(), binance_id=binance_id)
         self.db.add(client)
         self.db.commit()
         self.db.refresh(client)

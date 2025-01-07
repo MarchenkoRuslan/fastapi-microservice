@@ -12,10 +12,15 @@ class Client(Base):
     __tablename__ = "clients"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    binance_user_hash = Column(String, unique=True, index=True)
+    binance_id = Column(String, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Добавляем связь с Profile
+    profile = relationship("Profile", back_populates="client", uselist=False)
     orders = relationship("Order", back_populates="client")
+    survey_responses = relationship("SurveyResponse", back_populates="client")
+    verifications = relationship("Verification", back_populates="client")
 
     @staticmethod
     def generate_binance_hash(

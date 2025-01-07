@@ -10,11 +10,11 @@ class Settings(BaseSettings):
     POSTGRES_SERVER: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "app")
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "test_db")
 
     # Binance API
-    BINANCE_API_KEY: str = os.getenv("BINANCE_API_KEY", "")
-    BINANCE_SECRET_KEY: str = os.getenv("BINANCE_SECRET_KEY", "")
+    BINANCE_API_KEY: str = os.getenv("BINANCE_API_KEY", "test_key")
+    BINANCE_SECRET_KEY: str = os.getenv("BINANCE_SECRET_KEY", "test_secret")
     BINANCE_API_HOST: str = os.getenv("BINANCE_API_HOST", "https://api.binance.com")
     BINANCE_API_SECRET: str = os.getenv("BINANCE_API_SECRET", "test_secret")
 

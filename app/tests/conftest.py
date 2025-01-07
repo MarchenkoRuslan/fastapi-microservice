@@ -1,49 +1,36 @@
-import os
-from typing import Generator
-
 import pytest
-from app.db.base import Base
-from app.main import app
-from fastapi.testclient import TestClient
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-# Используем переменные окружения для подключения к тестовой БД
-POSTGRES_USER = os.getenv("POSTGRES_USER", "test_user")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "test_password")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
-POSTGRES_DB = os.getenv("POSTGRES_DB", "test_db")
+# Загружаем .env.test
+load_dotenv(".env.test")
 
-SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}"
-)
+# Используем переменные окружения
+DATABASE_URL = "postgresql://postgres:9379992@localhost:5432/test_db"
 
-test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+# Создаем движок с echo=True для отладки SQL
+engine = create_engine(DATABASE_URL, echo=True)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 @pytest.fixture(scope="session", autouse=True)
-def create_tables():
-    Base.metadata.create_all(bind=test_engine)
-    yield
-    Base.metadata.drop_all(bind=test_engine)
+def db():
+    from app.db.base import Base
 
-
-@pytest.fixture(scope="function")
-def db() -> Generator[Session, None, None]:
-    connection = test_engine.connect()
-    transaction = connection.begin()
-    session = TestingSessionLocal(bind=connection)
-
-    try:
-        yield session
-    finally:
-        session.close()
-        transaction.rollback()
-        connection.close()
-
-
-@pytest.fixture(scope="module")
-def client() -> Generator[TestClient, None, None]:
-    with TestClient(app) as c:
-        yield c
+    Base.metadata.create_all(bind=engine)
+    db = TestingSessionLocal()
+    yield db
+    db.close()
+    # Удаляем таблицы в правильном порядке
+    Base.metadata.drop_all(
+        bind=engine,
+        tables=[
+            Base.metadata.tables["verifications"],
+            Base.metadata.tables["survey_responses"],
+            Base.metadata.tables["profiles"],
+            Base.metadata.tables["orders"],
+            Base.metadata.tables["surveys"],
+            Base.metadata.tables["clients"],
+        ],
+    )
