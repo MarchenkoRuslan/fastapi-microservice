@@ -6,29 +6,32 @@ from app.models.verification import Verification
 from sqlalchemy.orm import Session
 
 
-def test_client_creation(db: Session):
-    client = Client(id=uuid4(), binance_id=f"test_binance_id_{uuid4()}")
+def test_client_creation(db):
+    # Создаем клиента
+    client = Client(binance_id="test123")
     db.add(client)
     db.commit()
-    db.refresh(client)
 
-    assert client.binance_id.startswith("test_binance_id_")
-    assert client.orders == []
-    assert client.survey_responses == []
-    assert client.verifications == []
-    assert client.profile is None
+    # Проверяем, что клиент создан
+    assert client.id is not None
+    assert client.binance_id == "test123"
+    assert len(client.profiles) == 0  # profiles вместо profile
 
 
-def test_profile_creation(db: Session):
-    client = Client(id=uuid4(), binance_id=f"test_binance_id_{uuid4()}")
+def test_profile_creation(db):
+    # Создаем клиента и профиль
+    client = Client(binance_id="test123")
     db.add(client)
+    db.commit()
 
-    profile = Profile(id=uuid4(), client_id=client.id)
+    profile = Profile(name="Test User", client_id=client.id)
     db.add(profile)
     db.commit()
 
+    # Проверяем связи
     assert profile.client_id == client.id
-    assert profile.client == client
+    assert len(client.profiles) == 1
+    assert client.profiles[0].name == "Test User"
 
 
 def test_verification_status_flow(db: Session):

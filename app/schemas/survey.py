@@ -1,34 +1,9 @@
-from datetime import datetime
-from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from . import BaseSchema
 
 
-class SurveyQuestionResponse(BaseModel):
-    question_id: str
-    answer: Any
-
-
-class SurveySubmission(BaseModel):
-    client_id: UUID
-    survey_id: UUID
-    responses: List[SurveyQuestionResponse]
-
-
-class SurveyResult(BaseModel):
-    score: int
-    passed: bool
-    details: Optional[Dict[str, Any]] = None
-
-
-class SurveyData(BaseModel):
+class SurveyResponse(BaseSchema):
     id: UUID
     title: str
-    content: Dict[str, Any]
-    active: bool = True
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
+    is_active: bool = True

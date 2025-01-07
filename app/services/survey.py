@@ -1,21 +1,21 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from uuid import UUID
 
-from app.models.survey import Survey, SurveyResponse
+from app.models.survey import Survey
+from app.models.survey_response import SurveyResponse
 from sqlalchemy.orm import Session
 
 
 class SurveyService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session = None):
         self.db = db
 
-    def get_active_survey(self) -> Optional[Survey]:
+    async def get_active_survey(self) -> Survey:
         return self.db.query(Survey).filter(Survey.is_active == True).first()
 
-    def calculate_score(self, responses: List[Dict[str, Any]], survey: Survey) -> int:
-        """Рассчитывает score на основе ответов клиента."""
-        score = 5  # установим фиксированное значение для теста
-        return score
+    async def calculate_score(self, answers: dict) -> int:
+        # Простая реализация подсчета очков
+        return len(answers)
 
     def save_responses(
         self,

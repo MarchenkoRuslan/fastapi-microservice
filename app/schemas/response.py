@@ -1,23 +1,19 @@
-from typing import Any, Dict, Optional
-
-from pydantic import BaseModel
+from . import BaseSchema
 
 
-class ResponseModel(BaseModel):
+class ResponseBase(BaseSchema):
     status: str
-    message: Optional[str] = None
-    data: Optional[Dict[str, Any]] = None
 
 
-class OrderCheckResponse(BaseModel):
+class OrderCheckResponse(BaseSchema):
     order_exists: bool
     needs_verification: bool
-    client_id: Optional[str] = None
+    client_id: str | None = None
     message: str
-    details: Optional[Dict[str, Any]] = None
+    details: dict | None = None
 
 
-class VerificationResponse(BaseModel):
+class VerificationResponse(BaseSchema):
     status: str
     message: str
-    session_url: Optional[str] = None
+    session_url: str | None = None

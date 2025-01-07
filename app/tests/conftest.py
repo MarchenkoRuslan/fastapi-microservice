@@ -1,36 +1,26 @@
 import pytest
-from dotenv import load_dotenv
+from app.db.base import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Загружаем .env.test
-load_dotenv(".env.test")
+# Используем тестовую базу данных
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:9379992@localhost:5432/test_db"
 
-# Используем переменные окружения
-DATABASE_URL = "postgresql://postgres:9379992@localhost:5432/test_db"
-
-# Создаем движок с echo=True для отладки SQL
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function")
 def db():
-    from app.db.base import Base
-
+    """
+    Создает чистую базу данных для каждого теста
+    """
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+
     db = TestingSessionLocal()
-    yield db
-    db.close()
-    # Удаляем таблицы в правильном порядке
-    Base.metadata.drop_all(
-        bind=engine,
-        tables=[
-            Base.metadata.tables["verifications"],
-            Base.metadata.tables["survey_responses"],
-            Base.metadata.tables["profiles"],
-            Base.metadata.tables["orders"],
-            Base.metadata.tables["surveys"],
-            Base.metadata.tables["clients"],
-        ],
-    )
+    try:
+        yield db
+    finally:
+        db.close()
+        Base.metadata.drop_all(bind=engine)

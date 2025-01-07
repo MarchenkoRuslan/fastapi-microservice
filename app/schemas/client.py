@@ -1,13 +1,11 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from . import BaseSchema
 
 
-class ClientBase(BaseModel):
-    email: Optional[EmailStr] = None
-    binance_user_id: Optional[str] = None
+class ClientBase(BaseSchema):
+    binance_id: str
 
 
 class ClientCreate(ClientBase):

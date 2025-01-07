@@ -1,19 +1,14 @@
-import uuid
-from datetime import datetime
+from uuid import uuid4
 
 from app.db.base_class import Base
-from sqlalchemy import Column, DateTime, ForeignKey, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import UUID, Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 
 class Order(Base):
-    __tablename__ = "orders"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"))
-    order_status = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(UUID, primary_key=True, default=uuid4)
+    order_id = Column(String, unique=True, index=True)
+    client_id = Column(UUID, ForeignKey("client.id"))
 
     client = relationship("Client", back_populates="orders")
+    verifications = relationship("Verification", back_populates="order")

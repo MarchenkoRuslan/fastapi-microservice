@@ -1,16 +1,10 @@
-from datetime import date
-from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from . import BaseSchema
 
 
-class ProfileBase(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    birth_date: Optional[date] = None
-    country: Optional[str] = None
-    address: Optional[str] = None
+class ProfileBase(BaseSchema):
+    name: str | None = None
 
 
 class ProfileCreate(ProfileBase):
