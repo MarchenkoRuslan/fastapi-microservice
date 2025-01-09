@@ -1,45 +1,28 @@
-import pytest
-from typing import Generator
-from sqlalchemy.orm import Session
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import os
 
+import pytest
 from app.db.base import Base
-from app.main import app
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-# Используем переменные окружения для подключения к тестовой БД
-POSTGRES_USER = os.getenv("POSTGRES_USER", "test_user")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "test_password")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")
-POSTGRES_DB = os.getenv("POSTGRES_DB", "test_db")
+# Используем тестовую базу данных
+SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@postgres:5432/test_db"
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-test_engine = create_engine(SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-
-@pytest.fixture(scope="session", autouse=True)
-def create_tables():
-    Base.metadata.create_all(bind=test_engine)
-    yield
-    Base.metadata.drop_all(bind=test_engine)
 
 @pytest.fixture(scope="function")
-def db() -> Generator[Session, None, None]:
-    connection = test_engine.connect()
-    transaction = connection.begin()
-    session = TestingSessionLocal(bind=connection)
-    
-    try:
-        yield session
-    finally:
-        session.close()
-        transaction.rollback()
-        connection.close()
+def db():
+    """
+    Создает чистую базу данных для каждого теста
+    """
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
-@pytest.fixture(scope="module")
-def client() -> Generator[TestClient, None, None]:
-    with TestClient(app) as c:
-        yield c 
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        Base.metadata.drop_all(bind=engine)
