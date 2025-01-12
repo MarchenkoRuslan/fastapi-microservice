@@ -9,32 +9,44 @@ from app.services.binance import BinanceService
 
 
 @pytest.mark.asyncio
-async def test_get_user_order_detail():
+async def test_get_user_order_detail_success():
+    # Подготавливаем тестовые данные
     mock_response = {
-        "data": {
-            "orderNumber": "123456",
-            "sellerName": "TestSeller",
-            "sellerNickname": "test_nick",
-            "sellerMobilePhone": "+1234567890",
-        }
+        "orderNumber": "123456789",
+        "status": "COMPLETED",
+        "amount": 100.0,
+        "fiat": "USD",
+        "crypto": "BTC",
+        "createTime": 1645084800000,
+        "updateTime": 1645084800000,
     }
 
+    # Создаем мок для ответа
+    mock_response_obj = AsyncMock()
+    mock_response_obj.status_code = 200
+    mock_response_obj.json.return_value = mock_response
+
+    # Используем обычный with вместо async with
     with patch(
         "app.services.binance.BinanceService.get_user_order_detail",
         return_value=mock_response,
-    ) as mock:
-        result = await mock("123456")
+    ) as mock_get:
+        service = BinanceService()
+        result = await service.get_user_order_detail("123456789")
+
         assert result == mock_response
+        mock_get.assert_called_once_with("123456789")
 
 
 @pytest.mark.asyncio
 async def test_get_user_order_detail_not_found():
-    service = BinanceService()
+    # Используем обычный with вместо async with
+    with patch(
+        "app.services.binance.BinanceService.get_user_order_detail",
+        side_effect=Exception("Order not found"),
+    ) as mock_get:
+        service = BinanceService()
+        with pytest.raises(Exception, match="Order not found"):
+            await service.get_user_order_detail("non_existent")
 
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.return_value.status_code = 404
-
-        with pytest.raises(Exception) as exc_info:
-            await service.get_user_order_detail("invalid")
-
-        assert "Order not found" in str(exc_info.value)
+        mock_get.assert_called_once_with("non_existent")

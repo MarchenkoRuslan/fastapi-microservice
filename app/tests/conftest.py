@@ -2,6 +2,8 @@ import os
 
 import pytest
 from app.db.base import Base
+from app.main import app
+from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -26,3 +28,9 @@ def db():
     finally:
         db.close()
         Base.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture
+async def client():
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac

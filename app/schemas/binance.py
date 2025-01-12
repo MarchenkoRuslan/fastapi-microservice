@@ -1,21 +1,12 @@
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from pydantic import BaseModel, Field
 
 
 class OrderCheckRequest(BaseModel):
-    order_number: str = Field(
+    orderNumber: str = Field(
         ..., description="Номер ордера Binance P2P", min_length=5, max_length=50
     )
-
-    class Config:
-        json_schema_extra = {"example": {"order_number": "123456789"}}
-
-
-class OrderCheckResponse(BaseModel):
-    status: str = Field(..., description="Статус запроса (success/error)")
-    data: Optional[Dict[str, Any]] = Field(None, description="Данные ордера")
-    error: Optional[str] = Field(None, description="Сообщение об ошибке")
 
     class Config:
         json_schema_extra = {
@@ -30,3 +21,20 @@ class OrderCheckResponse(BaseModel):
                 },
             }
         }
+
+
+class OrderCheckResponse(BaseModel):
+    status: str
+    data: Optional[Dict] = None
+    error: Optional[str] = None
+    message: Optional[str] = None
+
+
+class BinanceOrderDetail(BaseModel):
+    orderNumber: str
+    status: str
+    amount: float
+    fiat: str
+    crypto: str
+    createTime: int
+    updateTime: int

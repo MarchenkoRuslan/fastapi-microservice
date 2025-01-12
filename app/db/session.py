@@ -1,6 +1,9 @@
 import os
+from typing import AsyncGenerator
 
+from app.db.base import async_session_maker
 from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 # Получаем DATABASE_URL из переменных окружения
@@ -19,3 +22,11 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
