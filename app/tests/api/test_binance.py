@@ -1,28 +1,48 @@
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
-import pytest
 from app.main import app
 from fastapi.testclient import TestClient
 
-client = TestClient(app)
 
+def test_check_order_success():
+    mock_response = {
+        "orderNumber": "123456789",
+        "status": "COMPLETED",
+        "amount": 100.0,
+        "fiat": "USD",
+        "crypto": "BTC",
+        "createTime": 1645084800000,
+        "updateTime": 1645084800000,
+    }
 
-@pytest.mark.asyncio
-async def test_check_order_success():
     with patch(
-        "app.services.binance_service.BinanceService.get_user_order_detail"
-    ) as mock_get_order:
-        mock_get_order.return_value = {"orderNumber": "123", "status": "COMPLETED"}
-        response = client.get("/api/v1/binance/check-order/123")
+        "app.services.binance_service.BinanceService.get_user_order_detail",
+        new_callable=AsyncMock,
+    ) as mock_get:
+        mock_get.return_value = mock_response
+
+        client = TestClient(app)
+        response = client.post("/api/v1/checkOrder", json={"orderNumber": "123456789"})
+
         assert response.status_code == 200
-        assert response.json()["status"] == "COMPLETED"
+        data = response.json()
+        assert data["status"] == "success"
+        assert data["data"] == mock_response
 
 
-@pytest.mark.asyncio
-async def test_check_order_not_found():
+def test_check_order_not_found():
     with patch(
-        "app.services.binance_service.BinanceService.get_user_order_detail"
-    ) as mock_get_order:
-        mock_get_order.return_value = None
-        response = client.get("/api/v1/binance/check-order/123")
-        assert response.status_code == 404
+        "app.services.binance_service.BinanceService.get_user_order_detail",
+        new_callable=AsyncMock,
+    ) as mock_get:
+        mock_get.return_value = None
+
+        client = TestClient(app)
+        response = client.post(
+            "/api/v1/checkOrder", json={"orderNumber": "non_existent"}
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "error"
+        assert "not found" in data["error"].lower()
