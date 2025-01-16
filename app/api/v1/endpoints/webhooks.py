@@ -1,9 +1,10 @@
 from typing import Any
 
-from app.db.session import get_db
-from app.services.client import ClientService
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.services.client import ClientService
 
 router = APIRouter()
 

@@ -1,9 +1,10 @@
 from uuid import uuid4
 
+from sqlalchemy.orm import Session
+
 from app.models.client import Client
 from app.models.profile import Profile
 from app.models.verification import Verification
-from sqlalchemy.orm import Session
 
 
 def test_client_creation(db):

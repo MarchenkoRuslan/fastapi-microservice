@@ -1,10 +1,11 @@
 import os
 from typing import AsyncGenerator
 
-from app.db.base import async_session_maker
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
+
+from app.db.base import async_session_maker
 
 # Получаем DATABASE_URL из переменных окружения
 DATABASE_URL = os.getenv(

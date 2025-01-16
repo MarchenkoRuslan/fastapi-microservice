@@ -1,8 +1,8 @@
 from unittest.mock import AsyncMock, patch
 
-import pytest
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
 
 
 def test_check_order_success():

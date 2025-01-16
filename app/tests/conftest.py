@@ -1,11 +1,12 @@
 import os
 
 import pytest
-from app.db.base import Base
-from app.main import app
 from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from app.db.base import Base
+from app.main import app
 
 # Используем тестовую базу данных
 SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@postgres:5432/test_db"
