@@ -1,14 +1,12 @@
 image: python:3.11
 
-services:
-  - postgres:17
-
 variables:
-  POSTGRES_DB: test_db
-  POSTGRES_USER: ${DB_USER}
-  POSTGRES_PASSWORD: ${DB_PASSWORD}
-  DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/test_db"
-  POSTGRES_HOST_AUTH_METHOD: trust
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+
+cache:
+  paths:
+    - .pip-cache/
+    - .venv/
 
 stages:
   - lint
@@ -16,10 +14,14 @@ stages:
 
 lint:
   stage: lint
-  script:
-    - pip install pre-commit autoflake
+  before_script:
+    - pip install pre-commit
     - pre-commit install
-    - pre-commit run --all-files
+  script:
+    - black .
+    - isort .
+    - autoflake --in-place --remove-all-unused-imports --remove-unused-variables --expand-star-imports -r .
+    - flake8 .
     # Если есть изменения после форматирования, делаем коммит
     - |
       if [[ -n "$(git status --porcelain)" ]]; then
@@ -33,7 +35,6 @@ lint:
 test:
   stage: test
   script:
-    - pip install -r requirements.txt
-    - pip install -e .
-    - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
-    - pytest -v --cov=app
+    - pip install poetry
+    - poetry install
+    - poetry run pytest -v --cov=app
