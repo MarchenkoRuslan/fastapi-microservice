@@ -11,10 +11,13 @@ def test_check_order_success():
         "fiat": "USD",
         "crypto": "BTC",
         "createTime": 1645084800000,
-        "updateTime": 1645084800000
+        "updateTime": 1645084800000,
     }
     
-    with patch('app.services.binance_service.BinanceService.get_user_order_detail', new_callable=AsyncMock) as mock_get:
+    with patch(
+        "app.services.binance_service.BinanceService.get_user_order_detail",
+        new_callable=AsyncMock,
+    ) as mock_get:
         mock_get.return_value = mock_response
         
         client = TestClient(app)
@@ -29,7 +32,10 @@ def test_check_order_success():
         assert data["data"] == mock_response
 
 def test_check_order_not_found():
-    with patch('app.services.binance_service.BinanceService.get_user_order_detail', new_callable=AsyncMock) as mock_get:
+    with patch(
+        "app.services.binance_service.BinanceService.get_user_order_detail",
+        new_callable=AsyncMock,
+    ) as mock_get:
         mock_get.return_value = None
         
         client = TestClient(app)
@@ -43,7 +49,10 @@ def test_check_order_not_found():
         assert "not found" in data["detail"].lower()
 
 def test_check_order_error():
-    with patch('app.services.binance_service.BinanceService.get_user_order_detail', new_callable=AsyncMock) as mock_get:
+    with patch(
+        "app.services.binance_service.BinanceService.get_user_order_detail",
+        new_callable=AsyncMock,
+    ) as mock_get:
         mock_get.side_effect = Exception("Service error")
         
         client = TestClient(app)
