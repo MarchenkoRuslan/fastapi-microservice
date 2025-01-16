@@ -15,7 +15,7 @@ stages:
 lint:
   stage: lint
   before_script:
-    - pip install pre-commit
+    - pip install black isort autoflake flake8 pre-commit
     - pre-commit install
   script:
     - black .
