@@ -16,19 +16,18 @@ lint:
   stage: lint
   before_script:
     - pip install black isort autoflake flake8 pre-commit
-    - pre-commit install
+    - git config --global user.email "gitlab-ci@example.com"
+    - git config --global user.name "GitLab CI"
   script:
     - black .
     - isort .
     - autoflake --in-place --remove-all-unused-imports --remove-unused-variables --expand-star-imports -r .
     - flake8 .
-    # Если есть изменения после форматирования, делаем коммит
+    # Проверяем изменения и коммитим их
     - |
       if [[ -n "$(git status --porcelain)" ]]; then
-        git config --global user.email "gitlab-ci@example.com"
-        git config --global user.name "GitLab CI"
         git add .
-        git commit -m "style: auto-format code [skip ci]"
+        git commit -m "style: auto-format code with black, isort, autoflake [skip ci]"
         git push "https://oauth2:${CI_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:${CI_COMMIT_REF_NAME}
       fi
 
