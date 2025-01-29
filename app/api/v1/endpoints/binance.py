@@ -1,6 +1,7 @@
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.db.session import get_db
 from app.services.binance_service import BinanceService
-from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 

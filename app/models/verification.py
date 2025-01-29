@@ -1,8 +1,9 @@
 from uuid import uuid4
 
-from app.db.base_class import Base
 from sqlalchemy import UUID, Column, ForeignKey, String
 from sqlalchemy.orm import relationship
+
+from app.db.base_class import Base
 
 
 class Verification(Base):

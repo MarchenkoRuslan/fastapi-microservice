@@ -1,8 +1,9 @@
 from uuid import uuid4
 
+from sqlalchemy.orm import Session
+
 from app.models.client import Client
 from app.services.client import ClientService
-from sqlalchemy.orm import Session
 
 
 async def test_get_by_binance_id(db: Session):

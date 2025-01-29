@@ -4,6 +4,7 @@ import time
 from typing import Any, Dict
 
 import httpx
+
 from app.core.config import settings
 from app.core.logger import logger
 

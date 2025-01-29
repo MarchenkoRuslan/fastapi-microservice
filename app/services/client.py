@@ -1,8 +1,9 @@
 from typing import Any, Dict
 from uuid import uuid4
 
-from app.models.client import Client
 from sqlalchemy.orm import Session
+
+from app.models.client import Client
 
 
 class ClientService:

@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
 from app.services.binance_p2p import BinanceP2PService
 
 pytestmark = pytest.mark.asyncio

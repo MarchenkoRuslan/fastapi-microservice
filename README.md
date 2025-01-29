@@ -1,89 +1,89 @@
 # KYC Service
 
-Сервис для верификации клиентов и обработки заказов с интеграцией Binance. Включает в себя систему опросов для предварительной оценки клиентов и интеграцию с внешним KYC-провайдером.
+A service for client verification and order processing with Binance integration. Includes a survey system for preliminary client assessment and integration with an external KYC provider.
 
-## Особенности
+## Features
 
-- Интеграция с Binance API
-- Система опросов для оценки клиентов
-- Внешний KYC-провайдер для верификации
-- REST API на FastAPI
-- Асинхронная обработка запросов
+- Binance API Integration
+- Client Assessment Survey System
+- External KYC Provider Integration
+- FastAPI REST API
+- Asynchronous Request Processing
 
-## Описание
+## Description
 
-Сервис предоставляет API для:
-- Проверки существования ордеров в Binance
-- Верификации клиентов через KYC провайдера
-- Управления анкетированием клиентов
-- Хранения и обработки данных клиентов
+The service provides APIs for:
+- Verifying order existence in Binance
+- Client verification through KYC provider
+- Managing client surveys
+- Storing and processing client data
 
-### Основные возможности:
+### Core Capabilities:
 
-1. **Проверка ордеров**
-   - Валидация существования ордера в Binance
-   - Извлечение данных о клиенте из ордера
-   - Автоматическая регистрация новых клиентов
+1. **Order Verification**
+   - Validate order existence in Binance
+   - Extract client data from orders
+   - Automatic registration of new clients
 
-2. **Верификация клиентов**
-   - Интеграция с KYC провайдером
-   - Система опросников для предварительной оценки
-   - Отслеживание статуса верификации
+2. **Client Verification**
+   - KYC provider integration
+   - Survey system for preliminary assessment
+   - Verification status tracking
 
-## Технический стек
+## Tech Stack
 
 - **Backend**: Python 3.11, FastAPI
 - **Database**: PostgreSQL, SQLAlchemy, Alembic
-- **Контейнеризация**: Docker, Docker Compose
+- **Containerization**: Docker, Docker Compose
 - **CI/CD**: GitLab CI
-- **Тестирование**: pytest
-- **Линтинг**: flake8, black, isort
+- **Testing**: pytest
+- **Linting**: flake8, black, isort
 
-## Установка
+## Installation
 
-### Требования
+### Requirements
 
 - Python 3.11+
 - PostgreSQL
-- Docker и Docker Compose (опционально)
+- Docker and Docker Compose (optional)
 
-### Локальная установка
+### Local Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone https://gitlab.com/aheads-group/fast-api.git
 cd fast-api
 ```
 
-2. Создайте виртуальное окружение:
+2. Create virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/MacOS
-# или
+# or
 .\venv\Scripts\activate   # Windows
 ```
 
-3. Установите зависимости:
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Настройте переменные окружения:
+4. Configure environment variables:
 ```bash
 cp .env.example .env
-# Отредактируйте .env файл, установив необходимые значения
+# Edit .env file with appropriate values
 ```
 
-### Docker установка
+### Docker Installation
 
-1. Соберите и запустите контейнеры:
+1. Build and run containers:
 ```bash
 docker-compose up -d
 ```
 
-## Конфигурация
+## Configuration
 
-Основные настройки в `.env`:
+Main settings in `.env`:
 
 ```ini
 # PostgreSQL
@@ -105,137 +105,128 @@ JWT_ALGORITHM=HS256
 
 ## API Endpoints
 
-### Публичные эндпоинты
+### Public Endpoints
 
-#### Проверка ордера
+#### Check Order
 ```http
 GET /api/v1/public/check-order/{order_id}
 ```
-Проверяет существование ордера и необходимость верификации клиента
+Verifies order existence and client verification requirements
 
-#### Получение опросника
+#### Get Survey
 ```http
 GET /api/v1/public/survey
 ```
-Возвращает активный опросник для клиента
+Returns active survey for client
 
-#### Отправка ответов на опросник
+#### Submit Survey
 ```http
 POST /api/v1/public/survey/submit
 ```
-Принимает ответы на опросник и инициирует KYC верификацию
+Accepts survey responses and initiates KYC verification
 
-### Webhook эндпоинты
+### Webhook Endpoints
 
-#### KYC вебхук
+#### KYC Webhook
 ```http
 POST /api/v1/webhooks/kyc-webhook
 ```
-Обрабатывает результаты верификации от KYC провайдера
+Processes verification results from KYC provider
 
-## Разработка
+## Development
 
-### Запуск тестов
+### Running Tests
 ```bash
-# Запуск всех тестов с отчетом о покрытии
+# Run all tests with coverage report
 pytest --cov=app
 
-# Запуск конкретного теста
+# Run specific test
 pytest tests/api/test_public.py -v
 ```
 
-### Линтинг кода
+### Code Linting
 ```bash
-# Проверка стиля
+# Style check
 flake8 app
 
-# Форматирование
+# Formatting
 black app
 
-# Сортировка импортов
+# Import sorting
 isort app
 ```
 
-### Миграции базы данных
+### Database Migrations
 ```bash
-# Создание новой миграции
+# Create new migration
 alembic revision --autogenerate -m "Description"
 
-# Применение миграций
+# Apply migrations
 alembic upgrade head
 ```
 
 ## CI/CD
 
-Проект использует GitLab CI/CD со следующими этапами:
-- Линтинг кода
-- Запуск тестов
-- Сборка Docker образа
-- Деплой (ручной запуск)
+The project uses GitLab CI/CD with the following stages:
+- Code linting
+- Running tests
+- Docker image building
+- Deployment (manual trigger)
 
-## Структура проекта
+## Project Structure
 
 ```
 app/
-├── alembic/                    # Миграции БД
+├── alembic/                    # DB migrations
 ├── api/                        # API endpoints
 │   └── v1/
 │       ├── endpoints/         
-│       │   ├── public.py      # Публичные эндпоинты
-│       │   └── webhooks.py    # Вебхуки
-├── core/                      # Ядро приложения
-│   ├── config.py             # Конфигурация
-│   └── logger.py             # Настройки логирования
-├── db/                       # Работа с БД
-│   ├── base.py              # Базовые классы БД
-│   └── session.py           # Управление сессиями
-├── models/                   # SQLAlchemy модели
-│   ├── client.py            # Модель клиента
-│   ├── profile.py           # Модель профиля
-│   ├── survey.py            # Модели опросников
-│   └── verification.py      # Модель верификации
-├── schemas/                  # Pydantic схемы
-├── services/                 # Бизнес-логика
-└── tests/                   # Тесты
+│       │   ├── public.py      # Public endpoints
+│       │   └── webhooks.py    # Webhooks
+├── core/                      # Application core
+│   ├── config.py             # Configuration
+│   └── logger.py             # Logging settings
+├── db/                       # Database
+│   ├── base.py              # Base DB classes
+│   └── session.py           # Session management
+├── models/                   # SQLAlchemy models
+│   ├── client.py            # Client model
+│   ├── profile.py           # Profile model
+│   ├── survey.py            # Survey models
+│   └── verification.py      # Verification model
+├── schemas/                  # Pydantic schemas
+├── services/                 # Business logic
+└── tests/                   # Tests
 ```
 
-## Мониторинг и логирование
+## Monitoring and Logging
 
-### Логирование
-- Все HTTP запросы логируются с временем выполнения
-- Ошибки автоматически записываются в лог-файлы
-- Ротация логов настроена через RotatingFileHandler
+### Logging
+- All HTTP requests are logged with execution time
+- Errors are automatically written to log files
+- Log rotation configured through RotatingFileHandler
 
-### Метрики
-- Время ответа эндпоинтов
-- Статус верификаций
-- Количество успешных/неуспешных запросов
+### Metrics
+- Endpoint response time
+- Verification status
+- Successful/failed request count
 
-### Алерты
-- Оповещение при критических ошибках
-- Мониторинг статуса сервиса через /health эндпоинт
+### Alerts
+- Critical error notifications
+- Service status monitoring via /health endpoint
 
-## Поддержка и развитие
+## Support and Development
 
-### Сообщение об ошибках
-1. Проверьте существующие issues в GitLab
-2. Создайте новый issue с описанием проблемы:
-   - Шаги для воспроизведения
-   - Ожидаемое поведение
-   - Фактическое поведение
-   - Логи и скриншоты (если есть)
+### Bug Reporting
+1. Check existing issues in GitLab
+2. Create new issue with problem description:
+   - Steps to reproduce
+   - Expected behavior
+   - Actual behavior
+   - Logs and screenshots (if available)
 
-### Внесение изменений
-1. Создайте fork репозитория
-2. Внесите изменения в отдельной ветке
-3. Убедитесь, что все тесты проходят
-4. Создайте Merge Request
-
-## Лицензия
-
-[MIT License](LICENSE)
-
-## Авторы
-
-- Команда Aheads Group
-- Поддержка: support@aheads-group.com
+### Contributing
+1. Fork the repository
+2. Make changes in a separate branch
+3. Ensure all tests pass
+4. Create Merge Request

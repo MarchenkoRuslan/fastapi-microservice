@@ -1,8 +1,9 @@
 from uuid import uuid4
 
-from app.db.base_class import Base
 from sqlalchemy import JSON, UUID, Column, ForeignKey
 from sqlalchemy.orm import relationship
+
+from app.db.base_class import Base
 
 
 class SurveyResponse(Base):

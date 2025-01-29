@@ -1,14 +1,12 @@
 image: python:3.11
 
-services:
-  - postgres:17
-
 variables:
-  POSTGRES_DB: test_db
-  POSTGRES_USER: ${DB_USER}
-  POSTGRES_PASSWORD: ${DB_PASSWORD}
-  DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/test_db"
-  POSTGRES_HOST_AUTH_METHOD: trust
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+
+cache:
+  paths:
+    - .pip-cache/
+    - .venv/
 
 stages:
   - lint
@@ -16,15 +14,26 @@ stages:
 
 lint:
   stage: lint
+  before_script:
+    - pip install black isort autoflake flake8 pre-commit
+    - git config --global user.email "gitlab-ci@example.com"
+    - git config --global user.name "GitLab CI"
   script:
-    - pip install pre-commit autoflake
-    - pre-commit install
-    - pre-commit run --all-files
+    - black .
+    - isort .
+    - autoflake --in-place --remove-all-unused-imports --remove-unused-variables --expand-star-imports -r .
+    - flake8 .
+    # Проверяем изменения и коммитим их
+    - |
+      if [[ -n "$(git status --porcelain)" ]]; then
+        git add .
+        git commit -m "style: auto-format code with black, isort, autoflake [skip ci]"
+        git push "https://oauth2:${CI_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:${CI_COMMIT_REF_NAME}
+      fi
 
 test:
   stage: test
   script:
-    - pip install -r requirements.txt
-    - pip install -e .
-    - pip install pytest pytest-cov pytest-asyncio psycopg2-binary
-    - pytest -v --cov=app
+    - pip install poetry
+    - poetry install
+    - poetry run pytest -v --cov=app

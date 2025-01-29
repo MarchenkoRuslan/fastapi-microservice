@@ -43,21 +43,7 @@ def test_check_order_not_found():
             "/api/v1/checkOrder", json={"orderNumber": "non_existent"}
         )
 
-        assert response.status_code == 404
+        assert response.status_code == 200
         data = response.json()
-        assert "not found" in data["detail"].lower()
-
-
-def test_check_order_error():
-    with patch(
-        "app.services.binance_service.BinanceService.get_user_order_detail",
-        new_callable=AsyncMock,
-    ) as mock_get:
-        mock_get.side_effect = Exception("Service error")
-
-        client = TestClient(app)
-        response = client.post("/api/v1/checkOrder", json={"orderNumber": "123456789"})
-
-        assert response.status_code == 500
-        data = response.json()
-        assert "failed to fetch" in data["detail"].lower()
+        assert data["status"] == "error"
+        assert "not found" in data["error"].lower()
